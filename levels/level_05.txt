@@ -1,0 +1,10 @@
+599
+o-o-o-o-o
+|A|x|x|x|
+o-o-o-o-o
+|xxB|x|A|
+s-o-oxo-e
+|x|x|x|A|
+o-o-o-o-o
+|C|x|x|x|
+o-o-o-o-o
