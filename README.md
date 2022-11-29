@@ -10,11 +10,9 @@ Functional Puzzle Elements:
 - Squares
 
 
-### witnuino.ino
-Instantiates everything, sets up levels and updates on every loop.
+### witnuino.ino  Instantiates everything, sets up levels and updates on every loop.
 
-### DataHandler.h
-Handles communication with SD-card and reads data from .txt files.
+### DataHandler.h  Handles communication with SD-card and reads data from .txt files.
 
 ### Draw.h
 Handles the communication with the TFT display and draws on it. Also holds some functions for specific drawing, like lines from a grid-coordinate to another.
