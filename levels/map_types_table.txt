@@ -1,0 +1,42 @@
+======
+PATHS
+======
+s = start
+e = end
+
+(43 -> 44)
+o = vertex 
++ = vertex hex
+
+(45 -> 47)
+- = path
+. = path hex
+/ = path broken 
+
+======
+TILES
+======
+X = empty
+x = empty
+
+TRIANGLES(65->67)
+A = 1
+B = 2
+C = 3
+
+SQUARES(68->72)
+D = Square Black
+E = Square White
+F = Square Red
+G = Square Green
+H = Square Blue
+
+SUNS(73->78)
+I = Black
+J = White
+K = Red
+L = Green
+M = Blue
+
+
+

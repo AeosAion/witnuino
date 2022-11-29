@@ -1,0 +1,10 @@
+199
+o-e-o-o-o
+-D-D-E-D-
+o-o-o-o-o
+-D-D-D-D-
+o-o-o-o-o
+-D-E-D-D-
+o-o-o-o-o
+-E-E-E-D-
+s-o-o-o-o

@@ -1,0 +1,8 @@
+577
+o-o-o-o
+-D-D-D-
+o-o-o-o
+-D-E-D-
+e-o-o-o
+-E-E-E-
+s-o-o-o

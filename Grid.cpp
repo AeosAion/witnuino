@@ -24,6 +24,8 @@ void Grid::load_map(){
   
   if(colour_index == AREA00){
     bg_colour = AREA00_BG;
+    grid_colour = AREA00_GC;
+    path_colour = AREA00_PC;
   }
   if(colour_index == AREA01){
     bg_colour = AREA01_BG;

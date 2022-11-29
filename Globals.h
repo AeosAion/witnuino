@@ -20,7 +20,9 @@
 
 // area colours
 #define AREA00  48
-#define AREA00_BG 0xed80
+#define AREA00_BG 0xED80
+#define AREA00_GC BLACK
+#define AREA00_PC 0xFF32
 
 #define AREA01 49
 #define AREA01_BG 0x59F1 // 0x398F // 0x198C
