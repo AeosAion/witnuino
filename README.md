@@ -1,8 +1,7 @@
 # Witnuino
 ## The puzzle language of "The Witness" adapted for Arduino
-### using the Adafruit capacitive 2.8" TFT
 
-This is an adoption of the panel puzzles in the witness for the Arduino. The main challenge for me right now is to fit the whole code on the flash storage of an Arduino UNO. Memory is currently no issue. 
+This is an adoption of the panel puzzles in the witness for the Arduino. I'm using the Adafruit capacitive 2.8" TFT. The main challenge for me right now is to fit the whole code on the flash storage of an Arduino UNO. Memory is currently no issue. 
 
 Functional Puzzle Elements:
 - Mazes
