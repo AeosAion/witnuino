@@ -10,25 +10,19 @@ Functional Puzzle Elements:
 - Squares
 
 
-### witnuino.ino  Instantiates everything, sets up levels and updates on every loop.
+**witnuino.ino** instantiates everything, sets up levels and updates on every loop.
 
-### DataHandler.h  Handles communication with SD-card and reads data from .txt files.
+**DataHandler.h** handles communication with SD-card and reads data from .txt files.
 
-### Draw.h
-Handles the communication with the TFT display and draws on it. Also holds some functions for specific drawing, like lines from a grid-coordinate to another.
+**Draw.h** handles the communication with the TFT display and draws on it. Also holds some functions for specific drawing, like lines from a grid-coordinate to another.
 
-### Grid.h
-Creates an array of puzzle elements at their respective grid-coordinates.
+**Grid.h** creates an array of puzzle elements at their respective grid-coordinates.
 
-### Globals.h
-Wait, wait, wait... Its just some #define definitions that every class can include if neccessary. Maybe this is still not a nice style to do this?
+**Globals.h** wait, wait, wait... Its just some #define definitions that every class can include if neccessary. Maybe this is still not a nice style to do this?
 
-### Input.h
-Handles the communication with the touchscreen and holds the user touch position.
+**Input.h** handles the communication with the touchscreen and holds the user touch position.
 
-### Snake.h
-The snake / path the user can interact with and draw. 
+**Snake.h** the snake / path the user can interact with and draw. 
 
-### Solver.h
-Validates the solution that was input and gathers invalid elements if there are any.
+**Solver.h** validates the solution that was input and gathers invalid elements if there are any.
 
