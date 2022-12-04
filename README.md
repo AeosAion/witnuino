@@ -36,3 +36,37 @@ the snake / path the user can interact with and draw.
 ### Solver.h
 validates the solution that was input and gathers invalid elements if there are any.
 
+### Level Files
+The level files are coded in a quite simple fashion. ASCII coding is used to be able to visually edit and build the levels in a .txt file on your computer. This is the table of equivalent puzzle/ grid element to each character.
+
+
+| **char** | **element**  | **bit** |   |   |
+|----------|--------------|---------|---|---|
+| s        | startpoint   | 115     |   |   |
+| e        | endcap       | 101     |   |   |
+| o        | vertex       | 43      |   |   |
+| +        | vertex hex   | 44      |   |   |
+| -        | edge         | 45      |   |   |
+| .        | edge hex     | 46      |   |   |
+| /        | edge broken  | 47      |   |   |
+| ---      | ---          | ---     |   |   |
+| x        | empty        | 120     |   |   |
+| X        | empty        | 88      |   |   |
+| ---      | ---          | ---     |   |   |
+| A        | Triangle 1   | 65      |   |   |
+| B        | Triangle 2   | 66      |   |   |
+| C        | Triangle 3   | 67      |   |   |
+| ---      | ---          | ---     |   |   |
+| D        | Square Black | 68      |   |   |
+| E        | Square White | 69      |   |   |
+| F        | Square Red   | 70      |   |   |
+| G        | Square Green | 71      |   |   |
+| H        | Square Blue  | 72      |   |   |
+| ---      | ---          | ---     |   |   |
+| I        | Sun Black    | 73      |   |   |
+| J        | Sun White    | 74      |   |   |
+| K        | Sun Red      | 75      |   |   |
+| L        | Sun Green    | 76      |   |   |
+| M        | Sun Blue     | 77      |   |   |
+
+
