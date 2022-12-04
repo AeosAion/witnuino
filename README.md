@@ -1,7 +1,7 @@
 # Witnuino
 ## The puzzle language of "The Witness" adapted for Arduino
 
-This is an adoption of the panel puzzles in the witness for the Arduino. I'm using the Adafruit capacitive 2.8" TFT. The main challenge for me right now is to fit the whole code on the flash storage of an Arduino UNO. Memory is currently no issue. 
+This is an adoption of the panel puzzles in the witness for the Arduino. I'm using the Adafruit capacitive 2.8" TFT for input and displaying and the SD reader that comes with it for saving the level data. The code reads the level data from the SD, creates the puzzle from that data, lets the user interact with the path and finally returns the validity of the solution that was input. I'm really excited for this current version since a lot of the puzzle elements already fully work. There are a few displaying bugs to be fixed and style improvements to be made and hopefully, most importantly, more puzzle rules to be added. The main challenge for me right now is to fit the whole code on the flash storage of an Arduino UNO. Memory/ RAM is currently no issue. Almost everything is commented in the code though feel free to ask if something is unclear!
 
 Functional Puzzle Elements:
 - Mazes
@@ -9,12 +9,14 @@ Functional Puzzle Elements:
 - Triangles
 - Squares
 
+### /witnuino (folder)
+this goes to the root folder of the SD card. The code will search for this folder and will open it to look for the level and save files. The level files are currently named "x.txt" (with x being the levelnumber) for ease of use and to reduce the lines needed to locate them. The "save.txt" is not used yet due to storage shortcomings yet the system will write the last loaded level index to it, so we can load that when we restart the system.
 
 ### witnuino.ino
-instantiates everything, sets up levels and updates on every loop.
+this is the main sketch. It instantiates everything, sets up levels and updates the input and snake on every loop.
 
 ### DataHandler.h
-handles communication with SD-card and reads data from .txt files.
+handles communication with SD-card and reads data from the .txt files.
 
 ### Draw.h 
 handles the communication with the TFT display and draws on it. Also holds some functions for specific drawing, like lines from a grid-coordinate to another.
