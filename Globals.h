@@ -30,17 +30,26 @@
 #define AREA01_PC 0xB69F 
 
 // puzzle element types
+// EDGES
 #define P_VRTX    (uint8_t)111
 #define P_HEX     (uint8_t)43
 #define P_HORZ    (uint8_t)45
 #define P_STRT    (uint8_t)115
 #define P_END     (uint8_t)101
+
 #define C_NONE    (uint8_t)120
+
+// TRIANGLES
 #define C_TRI1    (uint8_t)65      
 #define C_TRI2    (uint8_t)66       
 #define C_TRI3    (uint8_t)67
+
+// SQUARES
 #define C_SQ_B    (uint8_t)68
 #define C_SQ_W    (uint8_t)69
+
+// SUNS
+#define C_SUN_B   (uint8_t)73
 
 // path + grid definitions
 #define PATHWIDTH   (uint8_t)21

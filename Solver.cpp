@@ -15,6 +15,8 @@ Solver::Solver(Snake* _snake, Grid* _grid, Draw* _draw) {
 bool Solver::validate() {
   bool valid = true;
 
+  floodfill_regions(1, 1);
+
   if (!validate_hexs()) {
     valid = false;
   }
@@ -23,7 +25,9 @@ bool Solver::validate() {
     valid = false;
   }
 
-  validate_regions(1, 1);
+  if (!validate_squares()){
+    valid = false;
+  }
 
   if (num_invalid != 0) {
     valid = false;
@@ -145,15 +149,10 @@ void Solver::invalids_add(uint8_t _gx, uint8_t _gy) {
   num_invalid++;
 }
 
-void Solver::validate_regions(uint8_t _gx, uint8_t _gy) {
+void Solver::floodfill_regions(uint8_t _gx, uint8_t _gy) {
   uint8_t visited[9][9];
   uint8_t visit[81][2];
-  uint8_t region_squares[9];
   uint8_t region = 1;
-
-  for (int i = 0; i < 9; i++) {
-    region_squares[i] = 0;
-  }
 
   // first set all to unvisited
   for (int i = 0; i < grid->sy; i++) {
@@ -162,21 +161,25 @@ void Solver::validate_regions(uint8_t _gx, uint8_t _gy) {
     }
   }
 
-  // set regionmarkers
+  // main floodfill loop
+  // basically an array treated in a stack manner
   for (int i = 1; i < grid->sy - 1; i++) {
     for (int j = 1; j < grid->sx - 1; j++) {
-
+      
+      // VISITED, skip to next.
       if (visited[j][i] != 0) {
         goto nextregion;
       }
 
+      // UNVISITED add to VISIT and set as start index
       if (visited[j][i] == 0) {
-        // then set the starting point to a visit location
         visit[0][0] = j;
         visit[0][1] = i;
+
+        // then we set the start index (in the array)
         int k = 0;
 
-        // take "stack-array" from top to bottom, where j indicates top pos
+        // now we take "stack-array" from (start index) top to bottom, where j indicates top pos
         while (k > -1) {
           uint8_t n = k;
 
@@ -188,22 +191,30 @@ void Solver::validate_regions(uint8_t _gx, uint8_t _gy) {
             goto next;
           }
 
-          // set current pos to visited
+          // set current pos to visited with region flag
           visited[current_x][current_y] = region;
 
-          // check for borders and skip if so
+          // PUZZLE BORDER CHECK
           if (current_x < 1 || current_x >= grid->sx - 1 || current_y < 1 || current_y >= grid->sy - 1) {
-            // visual debugging
-            // draw->fillCircle(grid->gpx(current_x), grid->gpy(current_y), 2, RED);
+            // draw->fill_circle(grid->gpx(current_x), grid->gpy(current_y), 2, RED); // visual debugging
             goto next;
           }
 
-          // check if path is there and skip if so
+          // PATH CHECK
           if (snake->contains(current_x, current_y)) {
-            // visual debugging
-            // draw->fillCircle(grid->gpx(current_x), grid->gpy(current_y), 2, RED);
+            // draw->fill_circle(grid->gpx(current_x), grid->gpy(current_y), 2, RED); // visual debugging
             goto next;
           }
+
+          // VALID
+          // To save memory we are only storing cells, and dismiss the edges.
+          // Thus we take the current x and y and divide it by two. 
+          // It will be rounded to the digit before the decimel.
+          region_map[current_x / 2][current_y / 2] = region;
+          
+          // visual debugging
+          // draw->fill_circle(20 * region, 20, 4, region * 50);
+          // draw->fill_circle(grid->gpx(current_x), grid->gpy(current_y), 2, region * 50);
 
           // add BOTTOM cell to array
           visit[k][0] = current_x;
@@ -222,40 +233,69 @@ void Solver::validate_regions(uint8_t _gx, uint8_t _gy) {
           visit[k][1] = current_y - 1;
           k++;
 
-          // visual debugging
-          // draw->fillCircle(20 * region, 20, 4, region * 50);
-          // draw->fillCircle(grid->gpx(current_x), grid->gpy(current_y), 2, region * 50);
+          next:
+          k--;
+          // delay(20); // delay for visual debugging purposes
+        }
+        num_regions++;
+        region++;
+      }
+      nextregion:
+      continue;
+    }
+  }
+}
 
-          uint8_t type = grid->get_type(current_x, current_y);
+bool Solver::validate_squares(){
+  for(int region = 1; region <= num_regions; region++){
+    uint8_t region_square = 0;
+    bool flash_region_squares = false;
 
+    // going through all cells
+    for(int i = 0; i < (grid->sy / 2); i++){
+      for(int j = 0; j < (grid->sx / 2); j++){
+        uint8_t map_x = (j * 2) + 1;
+        uint8_t map_y = (i * 2) + 1;
+        
+        // only looking at elements in the current region
+        if(region_map[j][i] == region){  
+          uint8_t type = grid->get_type(map_x, map_y);
+
+          // if its a square we cant have diffenrtly coloured in a region
           if (type == C_SQ_B || type == C_SQ_W) {
-            if (region_squares[region] == 0) {
-              region_squares[region] = type;
+            if (region_square == 0) {
+              region_square = type;
             }
-            if (type != region_squares[region]) {
-              invalids_add(current_x, current_y);
+            if (type != region_square) {
+              flash_region_squares = true;
             }
           }
 
-next:
-          k--;
-          // delay(100); // delay for visual debugging purposes
         }
-        region++;
       }
-nextregion:
-      continue;
-      // delay(10);
+    }
+
+    if(flash_region_squares){
+      for(uint8_t i = 0; i < (grid->sy / 2); i++){
+        for(uint8_t j = 0; j < (grid->sy / 2); j++){
+          if (region_map[j][i] == region){
+            uint8_t map_x = (j * 2) + 1;
+            uint8_t map_y = (i * 2) + 1;
+            uint8_t type = grid->get_type(map_x, map_y);
+            if (type == C_SQ_B || type == C_SQ_W){
+              invalids_add(map_x, map_y);
+            }
+          }
+        }
+      }
     }
   }
-
-
-
-  // TODO: check rounds and suns for region
-  // for(uint8_t i = 1; i < grid->sy; i = i + 2){
-  //   for(uint8_t j = 1; j < grid->sy; j = j + 2){
-  //     uint8_t c_region = visited(j, i);
-  //     if(type == )
-  //   }
-  // }
 }
+
+// bool Solver::validate_suns(){
+//   for(int i = 0; i < (grid->sy / 2); i++){
+//     for(int j = 0; j < (grid->sx / 2); j++){
+      
+//     }
+//   }
+// }

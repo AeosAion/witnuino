@@ -49,6 +49,7 @@ class Draw{
     void elements();
     void triangle(uint8_t _gx, uint8_t _gy, uint8_t _amnt, int _colour);
     void hex(uint8_t _gx, uint8_t _gy, int _colour);
-};
+    void sun(uint8_t _gx, uint8_t _gy, int _colour);
+    };
 
 #endif

@@ -15,17 +15,18 @@ bool Grid::setup() {
 
 // Reads the level file from the SD and creates gridmap
 void Grid::load_map(){
+  // INIT sd handling
   DataHandler dh = DataHandler();
   dh.setup();
-
+  
+  // SAVE FILE
   dh.open_txt_file("save");
- 
   for(int i = 0; i < 3; i++){
     level_digits[i] = dh.read_next() - '0';
   }
-
   dh.close_file();
 
+  // LEVEL FILE
   dh.open_txt_file(String(level_digits[0]) + String(level_digits[1]) + String(level_digits[2]));
 
   uint8_t colour_index = dh.read_next();   
@@ -33,13 +34,14 @@ void Grid::load_map(){
   if(colour_index == AREA00){
     bg_colour = AREA00_BG;
     grid_colour = AREA00_GC;
-    path_colour = AREA00_PC;
+    path_colour = AREA00_PC;   
   }
+
   if(colour_index == AREA01){
     bg_colour = AREA01_BG;
     grid_colour = AREA01_GC;
     path_colour = AREA01_PC;
-  }
+  }  
 
   sx = dh.read_next() - '0';
   sy = dh.read_next() - '0';

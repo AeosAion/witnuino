@@ -19,24 +19,31 @@ class Solver {
     // Goes through all validate functions.
     bool validate();
 
-    // validates the hex elements
+    // HEXs
     bool validate_hexs();
     bool validate_hex(uint8_t _gx, uint8_t _gy);
     
-    // validates the triangle elements
+    // TRIANGLES
     bool validate_triangles();
     bool validate_triangle(uint8_t _gx, uint8_t _gy);
-    
-    // validates all region elements. for now only squares
-    // basically a floodfill algorithm with region markers.
-    // TODO: sun elements.
-    void validate_regions(uint8_t _gx, uint8_t _gy);
 
-    // flashes all invalid elements.
+    // SQUARES
+    bool validate_squares();
+    
+    // FLOODFILL
+    // Basically a floodfill algorithm filling the region_map with region flags.
+    void floodfill_regions(uint8_t _gx, uint8_t _gy);
+
+    // FLASHES all invalid elements.
     void flash_invalids();
 
   private:
-    // counter for invalid elements & array with gridpositions
+    // REGION map + region counter
+    // The region map can be half the grid size, to save memory, because we do not need to look at the edges.
+    uint8_t num_regions = 1;
+    uint8_t region_map[4][4];
+
+    // INVALIDS + counter for invalid elements & array with gridpositions
     uint8_t num_invalid = 0;
     uint8_t invalids[16][2];
     void invalids_add(uint8_t _gx, uint8_t _gy);

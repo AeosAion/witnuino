@@ -62,7 +62,7 @@ class Snake{
     void set_start(uint8_t _gx, uint8_t _gy);
 
     // the almighty path
-    uint8_t path[30][2];
+    uint8_t path[27][2];
     uint8_t contains_at(uint8_t _gx, uint8_t _gy);
 };
 

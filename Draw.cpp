@@ -40,15 +40,6 @@ void Draw::fade(uint8_t delay_time, int from_brightness, int to_brightness){
 
 // Fill the whole screen.
 void Draw::fill_screen(int _colour){
-  // for(int i = 0; i <= SCREENWIDTH/2; i++){
-  //   if(i < SCREENWIDTH / 2){
-  //     tft.drawFastVLine(i + 1, 0, SCREENHEIGHT, BLACK);  
-  //     tft.drawFastVLine(SCREENWIDTH - (i + 1), 0, SCREENHEIGHT, BLACK); 
-  //   }
-    
-  //   tft.drawFastVLine(i, 0, SCREENHEIGHT, _colour);  
-  //   tft.drawFastVLine(SCREENWIDTH - i, 0, SCREENHEIGHT, _colour);  
-  // }
   tft.fillScreen(_colour);  
 }
 
@@ -199,6 +190,11 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
   if (type == C_SQ_W){
     fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, WHITE);
   }
+
+  // Sun
+  if (type == C_SUN_B){
+    sun(_gx, _gy, BLACK);
+  }
 }
 
 // Colour the element at grid coordinate. Mainly for flashing invalids.
@@ -277,13 +273,13 @@ void Draw::triangle(uint8_t _gx, uint8_t _gy, uint8_t _amnt, int _colour) {
   int d = round(grid->spacing / 4);
   int r = d - (d / 4);
 
-  int pixel_x = grid->gpx(_gx) - ((_amnt - 1) * d) - r;
-  int pixel_y = grid->gpy(_gy) + r;
+  int pix_x = grid->gpx(_gx) - ((_amnt - 1) * d) - r;
+  int pix_y = grid->gpy(_gy) + r;
 
   for (uint8_t i = 0; i < _amnt; i++) {
     int offset = (i * (2 * d));
     for (int i = 0; i < (r * 2); i++) {
-      tft.drawFastHLine(pixel_x + (i / 2) + offset, pixel_y - i, (r * 2) - i, _colour);
+      tft.drawFastHLine(pix_x + (i / 2) + offset, pix_y - i, (r * 2) - i, _colour);
     }
   }
 }
@@ -291,11 +287,30 @@ void Draw::triangle(uint8_t _gx, uint8_t _gy, uint8_t _amnt, int _colour) {
 // Draw hexagon puzzle element.
 void Draw::hex(uint8_t _gx, uint8_t _gy, int _colour){
   int r = PATHRADIUS - 2;
-  int drawX = grid->gpx(_gx) - r;
-  int drawY = grid->gpy(_gy);
+  int pix_x = grid->gpx(_gx) - r;
+  int pix_y = grid->gpy(_gy);
 
   for(uint8_t i = 0; i < r; i++){
-    tft.drawFastHLine(drawX + (i / 2), drawY + i, (r - (i / 2)) * 2, _colour);
-    tft.drawFastHLine(drawX + (i / 2), drawY - i, (r - (i / 2)) * 2, _colour);
+    tft.drawFastHLine(pix_x + (i / 2), pix_y + i, (r - (i / 2)) * 2, _colour);
+    tft.drawFastHLine(pix_x + (i / 2), pix_y - i, (r - (i / 2)) * 2, _colour);
   }
 } 
+
+void Draw::sun(uint8_t _gx, uint8_t _gy, int _colour){
+  int r = round(grid->spacing / 3);
+  long r2 = round(sqrt(pow(r, 2) / 2));  // sqrt(pow(a, 2) * 2);
+  int pix_x = grid->gpx(_gx);
+  int pix_y = grid->gpy(_gy);
+  
+  // simple square
+  for(uint8_t i = 0; i < r2; i ++){
+    tft.drawFastHLine(pix_x - r2, pix_y + i, r2 * 2, _colour);
+    tft.drawFastHLine(pix_x - r2, pix_y - i, r2 * 2, _colour);
+  }
+  
+  // 45° degree tilted square
+  for(uint8_t i = 0; i < r; i ++){ 
+    tft.drawFastHLine(pix_x - r + i, pix_y + i, (r * 2) - (i * 2), _colour);
+    tft.drawFastHLine(pix_x - r + i, pix_y - i, (r * 2) - (i * 2), _colour);
+  }
+}

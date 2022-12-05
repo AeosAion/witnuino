@@ -90,20 +90,18 @@ void Snake::move(uint8_t _dir){
   uint8_t tx = gx;
   uint8_t ty = gy;
 
-  if(_dir == LEFT){
-    tx -= 2;
-  }
+  switch(_dir){
+    case LEFT:
+      tx -= 2;
 
-  if(_dir == RIGHT){
-    tx += 2;
-  }
+    case RIGHT:
+      tx += 2;
 
-  if(_dir == UP){
-    ty -= 2;
-  }
+    case UP:
+      ty -= 2;
 
-  if(_dir == DOWN){
-    ty += 2;
+    case DOWN:
+      ty += 2;
   }
 
   // if there is no Cell or Path return without moving
@@ -258,7 +256,7 @@ uint8_t Snake::contains_at(uint8_t _gx, uint8_t _gy){
       return i;
     }   
   }
-  // if not return 126 as "false" identifier, because false, aka 0 could also be an int.
+  // if not return 126 as "false" identifier, because "false", aka "0" could also be an int.
   return 126;
 }
 
