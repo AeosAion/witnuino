@@ -17,8 +17,6 @@ Snake snake;
 // DRAW draws to the TFT
 Draw draw;
 
-uint8_t lvl = 0;
-
 void setup() {
   // Serial.begin(9600);  // for now deactivated to save program storage space
   
@@ -31,26 +29,23 @@ void setup() {
   input.setup();
 
   // setup the level and fade display in
-  setup_level(1);
-  draw.fade(1, 0, 120);
+  setup_level();
 }
 
-void setup_level(bool draw_bg){ 
+void setup_level(){ 
   // instantiate and setup GRID from the specified level file.
-  // TODO: get level index from save.txt from SD instead.
-  grid = Grid(lvl);  
+  grid = Grid();  
   grid.setup();
 
   // instantiate and setup SNAKE for the grid.
   snake = Snake(&grid, &input, &draw);
   snake.setup();
   
-  if(draw_bg){
-    draw.fill_screen(grid.bg_colour);
-  }
+  draw.fill_screen(grid.bg_colour);
 
   // draw the current puzzle to the TFT
   draw.puzzle();
+  draw.fade(1, 0, 120);
 }
 
 void loop() {
@@ -64,13 +59,14 @@ void loop() {
   if(snake.onEnd){
     Solver solver = Solver(&snake, &grid, &draw);
     if(solver.validate()){
-      lvl++;
       delay(1000);
-      setup_level(1);
+      draw.fade(1, 120, 0);
+      delay(100);
     } else {
       solver.flash_invalids();
-      setup_level(0);
+      draw.fade(1, 120, 0);
     }
+    setup_level();
   }
 }
 

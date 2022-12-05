@@ -27,6 +27,8 @@ class Grid{
     int grid_colour;
     int path_colour;
 
+    uint8_t level_digits[3];
+
     bool setup();
 
     // translate grid coordinate to pixel coordinate
@@ -39,7 +41,9 @@ class Grid{
     // return walkable at grid coordinate
     bool walkable(uint8_t _gx, uint8_t _gy);
 
-  private: 
+    // bool write_save(uint8_t _level_index);
+
+  private:   
     // array containing types at gridcoordinates [gx][gy]
     uint8_t elements_map[9][9]; 
     void load_map();

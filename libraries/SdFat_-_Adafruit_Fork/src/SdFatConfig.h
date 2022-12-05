@@ -35,31 +35,31 @@
 
 //------------- Adafruit configuration -------------//
 #define USE_BLOCK_DEVICE_INTERFACE 1
-#define FAT12_SUPPORT 1
+#define FAT12_SUPPORT 0
 #define SDFAT_FILE_TYPE 1
-#define USE_SPI_ARRAY_TRANSFER 1
+#define USE_SPI_ARRAY_TRANSFER 0
 
 // This option will take around 2K of flash, skip for AVR
-#ifndef __AVR__
-#define USE_UTF8_LONG_NAMES 1
-#endif
+// #ifndef __AVR__
+// #define USE_UTF8_LONG_NAMES 1
+// #endif
 
 // Backward-compatible define
-#define ENABLE_EXTENDED_TRANSFER_CLASS USE_BLOCK_DEVICE_INTERFACE
-#define BaseBlockDriver FsBlockDeviceInterface
-#define FatFileSystem FatVolume
-#define SdFatEX   SdFat
+// #define ENABLE_EXTENDED_TRANSFER_CLASS USE_BLOCK_DEVICE_INTERFACE
+// #define BaseBlockDriver FsBlockDeviceInterface
+// #define FatFileSystem FatVolume
+// #define SdFatEX   SdFat
 
 //
 // To try UTF-8 encoded filenames.
 // #define USE_UTF8_LONG_NAMES 1
 //
 // For minimum flash size use these settings:
-// #define USE_FAT_FILE_FLAG_CONTIGUOUS 0
-// #define ENABLE_DEDICATED_SPI 0
-// #define USE_LONG_FILE_NAMES 0
-// #define SDFAT_FILE_TYPE 1
-// #define CHECK_FLASH_PROGRAMMING 0  // May cause SD to sleep at high current.
+#define USE_FAT_FILE_FLAG_CONTIGUOUS 0
+#define ENABLE_DEDICATED_SPI 0
+#define USE_LONG_FILE_NAMES 0
+#define SDFAT_FILE_TYPE 1
+#define CHECK_FLASH_PROGRAMMING 0  // May cause SD to sleep at high current.
 //
 // Options can be set in a makefile or an IDE like platformIO
 // if they are in a #ifndef/#endif block below.

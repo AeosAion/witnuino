@@ -16,9 +16,17 @@ bool Grid::setup() {
 // Reads the level file from the SD and creates gridmap
 void Grid::load_map(){
   DataHandler dh = DataHandler();
-  
   dh.setup();
-  dh.open_txt_file(String(level_index));
+
+  dh.open_txt_file("save");
+ 
+  for(int i = 0; i < 3; i++){
+    level_digits[i] = dh.read_next() - '0';
+  }
+
+  dh.close_file();
+
+  dh.open_txt_file(String(level_digits[0]) + String(level_digits[1]) + String(level_digits[2]));
 
   uint8_t colour_index = dh.read_next();   
   

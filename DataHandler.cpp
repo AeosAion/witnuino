@@ -55,6 +55,7 @@ uint8_t DataHandler::read_next(){
 // TODO: NOT TESTED!! write value to file (we need to write the level index to save.txt).
 bool DataHandler::write_next(uint8_t value){
   file.write(value);
+  file.flush();
   return;
 }
 
