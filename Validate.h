@@ -1,23 +1,23 @@
 #include <stdint.h>
-#ifndef Solver_h
-#define Solver_h
+#ifndef Validate_h
+#define Validate_h
 
 #include "Globals.h"
 #include "Snake.h"
 #include "Draw.h"
 
-class Solver {
+class Validate {
   protected:
     Snake* snake;
     Grid* grid;
     Draw* draw;
 
   public:
-    Solver();
-    Solver(Snake* _snake, Grid* _grid, Draw* _draw);
+    Validate();
+    Validate(Snake* _snake, Grid* _grid, Draw* _draw);
 
     // Goes through all validate functions.
-    bool validate();
+    bool run();
 
     // HEXs
     bool validate_hexs();
@@ -29,6 +29,9 @@ class Solver {
 
     // SQUARES
     bool validate_squares();
+    
+    // SUNS
+    bool validate_suns();
     
     // FLOODFILL
     // Basically a floodfill algorithm filling the region_map with region flags.
@@ -42,6 +45,9 @@ class Solver {
     // The region map can be half the grid size, to save memory, because we do not need to look at the edges.
     uint8_t num_regions = 1;
     uint8_t region_map[4][4];
+
+    // returns the amount of defined colour in the defined region 
+    uint8_t colour_in_region(uint8_t colour_index, uint8_t region_index, uint8_t colour_map[4][4]);
 
     // INVALIDS + counter for invalid elements & array with gridpositions
     uint8_t num_invalid = 0;

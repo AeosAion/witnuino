@@ -50,6 +50,7 @@
 
 // SUNS
 #define C_SUN_B   (uint8_t)73
+#define C_SUN_W   (uint8_t)74
 
 // path + grid definitions
 #define PATHWIDTH   (uint8_t)21

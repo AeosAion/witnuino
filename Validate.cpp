@@ -1,10 +1,10 @@
 #include <stdint.h>
-#include "Solver.h"
+#include "Validate.h"
 
-Solver::Solver() {
+Validate::Validate() {
 }
 
-Solver::Solver(Snake* _snake, Grid* _grid, Draw* _draw) {
+Validate::Validate(Snake* _snake, Grid* _grid, Draw* _draw) {
   snake = _snake;
   grid = _grid;
   draw = _draw;
@@ -12,7 +12,7 @@ Solver::Solver(Snake* _snake, Grid* _grid, Draw* _draw) {
 
 // Main function that goes through all puzzle element validation functions.
 // TODO: Optimize. When theres no region puzzle elements dont validate_regions.
-bool Solver::validate() {
+bool Validate::run() {
   bool valid = true;
 
   floodfill_regions(1, 1);
@@ -26,6 +26,10 @@ bool Solver::validate() {
   }
 
   if (!validate_squares()){
+    valid = false;
+  }
+
+  if (!validate_suns()){
     valid = false;
   }
 
@@ -65,7 +69,7 @@ bool Solver::validate() {
 }
 
 //
-bool Solver::validate_triangles() {
+bool Validate::validate_triangles() {
   bool valid = true;
 
   for (int i = 0; i < grid->sy; i++) {
@@ -82,7 +86,7 @@ bool Solver::validate_triangles() {
   return valid;
 }
 
-bool Solver::validate_triangle(uint8_t _gx, uint8_t _gy) {
+bool Validate::validate_triangle(uint8_t _gx, uint8_t _gy) {
   uint8_t type = grid->get_type(_gx, _gy);
   uint8_t desire = type - (C_TRI1 - 1);
   uint8_t amnt = 0;
@@ -102,7 +106,7 @@ bool Solver::validate_triangle(uint8_t _gx, uint8_t _gy) {
   return true;
 }
 
-bool Solver::validate_hex(uint8_t _gx, uint8_t _gy) {
+bool Validate::validate_hex(uint8_t _gx, uint8_t _gy) {
   for (int i = 0; i <= snake->path_index; i++) {
     if (snake->get_gx_at(i) == _gx && snake->get_gy_at(i) == _gy) {
       return true;
@@ -112,7 +116,7 @@ bool Solver::validate_hex(uint8_t _gx, uint8_t _gy) {
   return false;
 }
 
-bool Solver::validate_hexs() {
+bool Validate::validate_hexs() {
   bool valid = true;
 
   for (int i = 0; i < grid->sy; i++) {
@@ -129,7 +133,7 @@ bool Solver::validate_hexs() {
   return valid;
 }
 
-void Solver::flash_invalids() {
+void Validate::flash_invalids() {
   for (int k = 0; k < 5; k++) {
     for (int i = 0; i < num_invalid; i++) {
       draw->colour_element(invalids[i][0], invalids[i][1], RED);
@@ -143,13 +147,13 @@ void Solver::flash_invalids() {
   }
 }
 
-void Solver::invalids_add(uint8_t _gx, uint8_t _gy) {
+void Validate::invalids_add(uint8_t _gx, uint8_t _gy) {
   invalids[num_invalid][0] = _gx;
   invalids[num_invalid][1] = _gy;
   num_invalid++;
 }
 
-void Solver::floodfill_regions(uint8_t _gx, uint8_t _gy) {
+void Validate::floodfill_regions(uint8_t _gx, uint8_t _gy) {
   uint8_t visited[9][9];
   uint8_t visit[81][2];
   uint8_t region = 1;
@@ -246,7 +250,7 @@ void Solver::floodfill_regions(uint8_t _gx, uint8_t _gy) {
   }
 }
 
-bool Solver::validate_squares(){
+bool Validate::validate_squares(){
   for(int region = 1; region <= num_regions; region++){
     uint8_t region_square = 0;
     bool flash_region_squares = false;
@@ -292,10 +296,86 @@ bool Solver::validate_squares(){
   }
 }
 
-// bool Solver::validate_suns(){
-//   for(int i = 0; i < (grid->sy / 2); i++){
-//     for(int j = 0; j < (grid->sx / 2); j++){
+// The following is a bit unfortunate:
+// To save memory (RAM) I chose to not create a Cell class that 
+// would hold the position, type of cell, colour etc.. I think that would
+// be the nicest way to handle this, though it'd eat through so much more memory. 
+// Currently the grid is a [9][9] array of uint8_t which is slim 81 bytes. 
+// Having a Cell class with just the type and colour would double the size.
+
+bool Validate::validate_suns(){
+  bool valid = true;
+  uint8_t colour_map[4][4]; // 0 = NONE, 1 = BLACK, 2 = WHITE, 3 = ORANGE
+
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      colour_map[j][i] = 0;
+    }
+  }
+
+  // first fill the colour map
+  for(int i = 0; i < (grid->sy / 2); i++){
+    for(int j = 0; j < (grid->sx / 2); j++){
+      uint8_t map_x = (j * 2) + 1;
+      uint8_t map_y = (i * 2) + 1;
+      uint8_t type = grid->get_type(map_x, map_y);     
+
+      // BLACK
+      if (type == C_SQ_B || type == C_SUN_B){
+        colour_map[j][i] = 1;
+        continue;
+      }
       
-//     }
-//   }
-// }
+      // WHITE
+      if (type == C_SQ_W || type == C_SUN_W){
+        colour_map[j][i] = 2;
+        continue;
+      }
+      
+      // ORANGE
+      // if (type > 64 && type < 68){
+      //   colour_map[map_x][map_y] = 3;
+      //   continue;
+      // }
+
+      colour_map[j][i] = 0;
+    }
+  }
+
+  // then checking each sun for its region and amount of same coloured in that region
+  // if the amount is over 1 its invalid.
+  for(int i = 0; i < (grid->sy / 2); i++){
+    for(int j = 0; j < (grid->sx / 2); j++){
+      uint8_t map_x = (j * 2) + 1;
+      uint8_t map_y = (i * 2) + 1;
+      uint8_t type = grid->get_type(map_x, map_y);      
+      
+      if (type >= C_SUN_B && type <= C_SUN_W){     
+        if(colour_in_region(colour_map[j][i], region_map[j][i], colour_map) != 2){
+          invalids_add(map_x, map_y);
+          valid = false;
+        }
+      }
+    }
+  }
+
+  return valid;
+}
+
+uint8_t Validate::colour_in_region(uint8_t colour_index, uint8_t region_index, uint8_t colour_map[4][4]){
+  uint8_t colour_counter = 0;
+
+  for(int i = 0; i < (grid->sy / 2); i++){
+    for(int j = 0; j < (grid->sx / 2); j++){
+      if(region_map[j][i] != region_index){
+        continue;
+      }
+      if(colour_map[j][i] != colour_index){
+        continue;  
+      }
+      colour_counter++;
+    }
+  }
+  return colour_counter;
+}
+

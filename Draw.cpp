@@ -195,30 +195,39 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
   if (type == C_SUN_B){
     sun(_gx, _gy, BLACK);
   }
+
+  if (type == C_SUN_W){
+    sun(_gx, _gy, WHITE);
+  }
 }
 
 // Colour the element at grid coordinate. Mainly for flashing invalids.
 void Draw::colour_element(uint8_t _gx, uint8_t _gy, int _colour){
   uint8_t type = grid->get_type(_gx, _gy);  
   
-  // Endcap
+  // ENDCAP
   if (type == P_END){     
     endcap(_gx, _gy, _colour);
   }
   
-  // Hex
+  // HEX
   if (type == P_HEX){     
     hex(_gx, _gy, _colour);
   }
 
-  // Triangle
+  // TRIANGLE
   if (type >= C_TRI1 && type <= C_TRI3) {  // triangle tile
     triangle(_gx, _gy, type - (C_TRI1 - 1), _colour);
   }
 
-  // Squares
+  // SQUARE
   if (type >= C_SQ_B && type <= C_SQ_W){
     fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, _colour);
+  }
+
+  // SUN
+  if (type >= C_SUN_B && type <= C_SUN_W){
+    sun(_gx, _gy, _colour);
   }
 }
 
@@ -251,6 +260,7 @@ void Draw::endcap(uint8_t _gx, uint8_t _gy, int _colour){
   }
 
   draw:
+  fill_circle(from_x, from_y, PATHRADIUS, _colour);
   line(from_x, from_y, to_x, to_y, PATHWIDTH, _colour);
   fill_circle(to_x, to_y, PATHRADIUS, _colour);
 }

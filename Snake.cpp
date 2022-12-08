@@ -57,7 +57,7 @@ void Snake::update(){
     uint8_t gcy = round((cy - grid->y) / grid->spacing);
     gcy += gcy % 2;
 
-    // if the snake was never activated we check for whih startpoint
+    // if the snake was never activated we check for all startpoints
     // the input might collide with and set the startpoint accordingly
     if(!active){
       for(int i = 0; i < grid->sy; i++){
@@ -93,15 +93,19 @@ void Snake::move(uint8_t _dir){
   switch(_dir){
     case LEFT:
       tx -= 2;
+      break;
 
     case RIGHT:
       tx += 2;
+      break;
 
     case UP:
       ty -= 2;
+      break;
 
     case DOWN:
       ty += 2;
+      break;
   }
 
   // if there is no Cell or Path return without moving

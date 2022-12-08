@@ -2,7 +2,7 @@
 #include "Grid.h"
 #include "Input.h"
 #include "Snake.h"
-#include "Solver.h"
+#include "Validate.h"
 #include "Draw.h"
 
 // GRID contains grid information
@@ -57,13 +57,13 @@ void loop() {
   // if the player stopped at the endpoint...
   // we instantiate a SOLVER to check the solution for validity.
   if(snake.onEnd){
-    Solver solver = Solver(&snake, &grid, &draw);
-    if(solver.validate()){
+    Validate validate = Validate(&snake, &grid, &draw);
+    if(validate.run()){
       delay(1000);
       draw.fade(1, 120, 0);
       delay(100);
     } else {
-      solver.flash_invalids();
+      validate.flash_invalids();
       draw.fade(1, 120, 0);
     }
     setup_level();
