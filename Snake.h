@@ -32,7 +32,7 @@ class Snake{
 
     void setup();
     void update(); 
-
+    
     // return elements from snake path
     uint8_t get_gx_at(uint8_t _index);
     uint8_t get_gy_at(uint8_t _index);

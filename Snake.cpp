@@ -51,11 +51,6 @@ void Snake::update(){
 
     int cx = input->x;
     int cy = input->y;
-    
-    uint8_t gcx = round((cx - grid->x) / grid->spacing);
-    gcx += gcx % 2;
-    uint8_t gcy = round((cy - grid->y) / grid->spacing);
-    gcy += gcy % 2;
 
     // if the snake was never activated we check for all startpoints
     // the input might collide with and set the startpoint accordingly
@@ -66,7 +61,7 @@ void Snake::update(){
             if(Calc().collision(cx, cy, grid->gpx(j), grid->gpy(i), SNAPRADIUS)){
               active = true;
               set_start(j, i);
-              draw->gfill_circle(gx, gy, STARTRADIUS, grid->path_colour);
+              draw->fill_circle(grid->gpx(gx), grid->gpy(gy), STARTRADIUS, grid->path_colour);
               return;
             }
           }
@@ -74,6 +69,11 @@ void Snake::update(){
       }
     }
 
+    uint8_t gcx = round((cx - grid->x) / grid->spacing);
+    gcx += gcx % 2;
+    uint8_t gcy = round((cy - grid->y) / grid->spacing);
+    gcy += gcy % 2;
+    
     // get the input. if its the same as the snakehead do nothing
     // else move into the direction of the touchposition.
     if(active){
@@ -132,10 +132,12 @@ void Snake::move(uint8_t _dir){
 
   gx = tx;
   gy = ty;
+
   x = grid->gpx(gx);
   y = grid->gpy(gy);
+
   path_handling();
-  delay(100);
+  delay(75);
 }
 
 // returns pathpoints grid x pos at input index
@@ -165,7 +167,7 @@ void Snake::path_handling(){
   
   // if the distance is smaller than one vertex step, we are retracting the path. Else appending to it.
   if(d < 2 && path_index > 0){  
-    draw->gline(get_last_gx(), get_last_gy(), get_gx_at(path_index - 1), get_gy_at(path_index - 1), PATHWIDTH, grid->grid_colour);
+    draw->line(grid->gpx(get_last_gx()), grid->gpy(get_last_gy()), grid->gpx(get_gx_at(path_index - 1)), grid->gpy(get_gy_at(path_index - 1)), PATHWIDTH, grid->grid_colour);
     draw->element(get_last_gx(), get_last_gy());
     path_index--;
   } else {
@@ -183,14 +185,14 @@ void Snake::draw_path(int _colour){
 
   // then the edgesegments, 
   for(int i = 1; i <= path_index; i++){
-    draw->gline(get_gx_at(i), get_gy_at(i), get_gx_at(i - 1), get_gy_at(i - 1), PATHWIDTH, _colour);
+    draw->line(grid->gpx(get_gx_at(i)), grid->gpy(get_gy_at(i)), grid->gpx(get_gx_at(i - 1)), grid->gpy(get_gy_at(i - 1)), PATHWIDTH, _colour);
   }
 
   // then the "head" as a radius.
   draw->fill_circle(x, y, PATHRADIUS, _colour);
 }
 
-// converts touchposition relative to headposition to direction
+// converts touchposition relative to snakehead into direction
 uint8_t Snake::direction(uint8_t gcx, uint8_t gcy){
   if(abs(gcx - gx) > abs(gcy - gy)){
     if(gcx > gx){

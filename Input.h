@@ -13,6 +13,9 @@ class Input{
     int x;
     int y;
 
+    int previous_x;
+    int previous_y;
+
     // Active = There is an input/ touch at the current cycle.
     bool active;
     

@@ -59,6 +59,7 @@ void loop() {
   if(snake.onEnd){
     Validate validate = Validate(&snake, &grid, &draw);
     if(validate.run()){
+      write_save();
       delay(1000);
       draw.fade(1, 120, 0);
       delay(100);
@@ -70,5 +71,27 @@ void loop() {
   }
 }
 
+void write_save(){
+    DataHandler dh = DataHandler();
+    dh.setup();
+    dh.open_txt_file("save");
+    
+    grid.level_digits[2] += 1;
+
+    if(grid.level_digits[2] > 9){
+      grid.level_digits[2] = 0;
+      grid.level_digits[1] += 1;
+
+      if((grid.level_digits[1] + 1) > 9){
+        grid.level_digits[1] = 0;
+        grid.level_digits[0] += 1;
+      }
+    }
+
+    for(int i = 0; i < 3; i++){
+      dh.write_next(grid.level_digits[i] + '0');
+    }
+    dh.close_file();
+}
 
 

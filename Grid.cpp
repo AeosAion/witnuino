@@ -29,24 +29,17 @@ void Grid::load_map(){
   // LEVEL FILE
   dh.open_txt_file(String(level_digits[0]) + String(level_digits[1]) + String(level_digits[2]));
 
-  uint8_t colour_index = dh.read_next();   
+  uint8_t colour_index = dh.read_next();
+  // colour_index *= 3;   
   
-  if(colour_index == AREA00){
-    bg_colour = AREA00_BG;
-    grid_colour = AREA00_GC;
-    path_colour = AREA00_PC;   
-  }
-
-  if(colour_index == AREA01){
-    bg_colour = AREA01_BG;
-    grid_colour = AREA01_GC;
-    path_colour = AREA01_PC;
-  }  
-
+  bg_colour = AREA00_BG; // + colour_index;
+  grid_colour = AREA00_GC; // + colour_index;
+  path_colour = AREA00_PC; // + colour_index;   
+  
   sx = dh.read_next() - '0';
   sy = dh.read_next() - '0';
 
-  // skipping the new line chars
+  // skipping the "new line" chars
   dh.read_next();          
   dh.read_next();
 
@@ -65,14 +58,9 @@ void Grid::load_map(){
 
 // returns type of a gridpos
 uint8_t Grid::get_type(uint8_t _gx, uint8_t _gy){
-  if (_gx < 0 || _gy < 0) {
+  if (_gx < 0 || _gy < 0 || _gx > sx - 1 || _gy > sy - 1) {
     return C_NONE;
   }
-  
-  if (_gx > sx - 1 || _gy > sy - 1) {
-    return C_NONE;
-  }
-
   return elements_map[_gx][_gy];
 }
 

@@ -48,43 +48,6 @@ void Draw::fill_circle(int _x, int _y, int _r, int _colour){
   tft.fillCircle(_x, _y, _r, _colour);
 }
 
-// Line from grid coordinate to grid coordinate with width. VERTICAL OR HORIZONTAL ONLY!!
-void Draw::gline(uint8_t _gx0, uint8_t _gy0, uint8_t _gx1, uint8_t _gy1, int _width, int _colour){
-  int length;
-  int widthOffset = _width / 2;
-
-  int x0 = grid->gpx(_gx0);
-  int y0 = grid->gpy(_gy0);
-
-  int x1 = grid->gpx(_gx1);
-  int y1 = grid->gpy(_gy1);
-
-  int x2 = x0;
-  int y2 = y0;
-
-  if (y0 == y1) {
-    length = abs(x0 - x1);
-    if (x0 > x1) {
-      x2 = x1;
-    }
-    for (int8_t i = 0; i < widthOffset; i++) {
-      tft.drawFastHLine(x2, y2 + i, length, _colour);
-      tft.drawFastHLine(x2, y2 - i, length, _colour);    
-      }
-  }
-
-  if (x0 == x1) {
-    length = abs(y0 - y1);
-    if (y0 > y1) {
-      y2 = y1;
-    }
-    for (int8_t i = 0; i < widthOffset; i++) {
-      tft.drawFastVLine(x2 + i, y2, length, _colour);
-      tft.drawFastVLine(x2 - i, y2, length, _colour);
-    }
-  }
-}
-
 // Line from pixel coordinate to pixel coordinate with width. VERTICAL OR HORIZONTAL ONLY!!
 void Draw::line(int _x0, int _y0, int _x1, int _y1, int _width, int _colour){
   int length;
@@ -93,7 +56,7 @@ void Draw::line(int _x0, int _y0, int _x1, int _y1, int _width, int _colour){
   int x2 = _x0;
   int y2 = _y0;
 
-  if (_y0 == _y1) {
+  if (abs(_y0 - _y1) < abs(_x0 - _x1)) {
     length = abs(_x0 - _x1);
     if (_x0 > _x1) {
       x2 = _x1;
@@ -104,7 +67,7 @@ void Draw::line(int _x0, int _y0, int _x1, int _y1, int _width, int _colour){
       }
   }
 
-  if (_x0 == _x1) {
+  if (abs(_y0 - _y1) > abs(_x0 - _x1)) {
     length = abs(_y0 - _y1);
     if (_y0 > _y1) {
       y2 = _y1;
@@ -144,6 +107,7 @@ void Draw::edges(){
 // Draw the element at grid coordinate.
 void Draw::element(uint8_t _gx, uint8_t _gy) {
   uint8_t type = grid->get_type(_gx, _gy);
+
   // Vertex
   if (type == P_VRTX || type == P_HEX) {
     gfill_circle(_gx, _gy, PATHRADIUS, grid->grid_colour);
@@ -154,11 +118,11 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
     for (int8_t i = -1; i < 2; i++) {
       uint8_t nt = grid->get_type(_gx + i, _gy);
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
-        gline(_gx, _gy, _gx + i, _gy, PATHWIDTH, grid->grid_colour);
+        line(grid->gpx(_gx), grid->gpy(_gy), grid->gpx(_gx + i), grid->gpy(_gy), PATHWIDTH, grid->grid_colour);
       }
-      nt = grid->get_type(_gx, _gy + 1);
+      nt = grid->get_type(_gx, _gy + i);
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
-        gline(_gx, _gy, _gx, _gy + i, PATHWIDTH, grid->grid_colour);
+        line(grid->gpx(_gx), grid->gpy(_gy), grid->gpx(_gx), grid->gpy(_gy + i), PATHWIDTH, grid->grid_colour);
       }
     }
   }
@@ -184,20 +148,37 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
   }
 
   // Square
-  if (type == C_SQ_B){
-    fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, BLACK);
-  }
-  if (type == C_SQ_W){
-    fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, WHITE);
+  if (type >= C_SQ_B && type <= C_SQ_ORANGE){
+    int colour = colour_index_translate(type - C_SQ_B);
+    fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, colour);
   }
 
   // Sun
-  if (type == C_SUN_B){
-    sun(_gx, _gy, BLACK);
+  if (type >= C_SUN_B && type <= C_SUN_ORANGE){
+    int colour = colour_index_translate(type - C_SUN_B);
+    sun(_gx, _gy, colour);
+  }
+}
+
+int Draw::colour_index_translate(uint8_t colour_index){
+  if(colour_index == 0){
+    return BLACK;
+  }
+  
+  if(colour_index == 1){
+    return WHITE;
   }
 
-  if (type == C_SUN_W){
-    sun(_gx, _gy, WHITE);
+  if(colour_index == 2){
+    return BLUE;
+  }
+
+  if(colour_index == 3){
+    return GREEN;
+  }
+
+  if(colour_index == 4){
+    return TRICOLOUR;
   }
 }
 

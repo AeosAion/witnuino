@@ -1,7 +1,6 @@
 #ifndef DataHandler_h
 #define DataHandler_h
 
-#include "Arduino.h"
 #include "SdFat.h"
 
 #define SD_CS 4

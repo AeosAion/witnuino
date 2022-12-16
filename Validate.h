@@ -19,6 +19,8 @@ class Validate {
     // Goes through all validate functions.
     bool run();
 
+    bool validate_hts();
+
     // HEXs
     bool validate_hexs();
     bool validate_hex(uint8_t _gx, uint8_t _gy);
@@ -28,7 +30,8 @@ class Validate {
     bool validate_triangle(uint8_t _gx, uint8_t _gy);
 
     // SQUARES
-    bool validate_squares();
+    bool validate_square(uint8_t gx, uint8_t gy);
+    // bool validate_squares();
     
     // SUNS
     bool validate_suns();

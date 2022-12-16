@@ -17,17 +17,13 @@ bool Validate::run() {
 
   floodfill_regions(1, 1);
 
-  if (!validate_hexs()) {
+  if (!validate_hts()){
     valid = false;
   }
 
-  if (!validate_triangles()) {
-    valid = false;
-  }
-
-  if (!validate_squares()){
-    valid = false;
-  }
+  // if (!validate_squares()){
+  //   valid = false;
+  // }
 
   if (!validate_suns()){
     valid = false;
@@ -38,49 +34,35 @@ bool Validate::run() {
   }
 
   if (valid) {
-    DataHandler dh = DataHandler();
-    dh.setup();
-    dh.open_txt_file("save");
-
-    uint8_t level_digits[3];
-    for(int i = 0; i < 3; i++){
-      level_digits[i] = grid->level_digits[i];
-    }
-    
-    level_digits[2] += 1;
-
-    if(level_digits[2] > 9){
-      level_digits[2] = 0;
-      level_digits[1] += 1;
-
-      if((level_digits[1] + 1) > 9){
-        level_digits[1] = 0;
-        level_digits[0] += 1;
-      }
-    }
-
-    for(int i = 0; i < 3; i++){
-      dh.write_next(level_digits[i] + '0');
-    }
-    dh.close_file();
+    // write to savefile
   }
-
   return valid;
 }
 
-//
-bool Validate::validate_triangles() {
+bool Validate::validate_hts(){
   bool valid = true;
 
   for (int i = 0; i < grid->sy; i++) {
     for (int j = 0; j < grid->sx; j++) {
       uint8_t type = grid->get_type(j, i);
 
+      if (type == P_HEX) {
+        if (!validate_hex(j, i)) {
+          valid = false;
+        }
+      }
+
       if (type >= C_TRI1 && type <= C_TRI3) {
         if (!validate_triangle(j, i)) {
           valid = false;
         }
       }
+   
+      if  (type >= C_SQ_B && type <= C_SQ_ORANGE) {
+        if(!validate_square(j, i)){
+          valid = false;
+        }
+      }     
     }
   }
   return valid;
@@ -114,23 +96,6 @@ bool Validate::validate_hex(uint8_t _gx, uint8_t _gy) {
   }
   invalids_add(_gx, _gy);
   return false;
-}
-
-bool Validate::validate_hexs() {
-  bool valid = true;
-
-  for (int i = 0; i < grid->sy; i++) {
-    for (int j = 0; j < grid->sx; j++) {
-      uint8_t type = grid->get_type(j, i);
-
-      if (type == P_HEX) {
-        if (!validate_hex(j, i)) {
-          valid = false;
-        }
-      }
-    }
-  }
-  return valid;
 }
 
 void Validate::flash_invalids() {
@@ -239,7 +204,7 @@ void Validate::floodfill_regions(uint8_t _gx, uint8_t _gy) {
 
           next:
           k--;
-          // delay(20); // delay for visual debugging purposes
+          // delay(50); // delay for visual debugging purposes
         }
         num_regions++;
         region++;
@@ -250,51 +215,140 @@ void Validate::floodfill_regions(uint8_t _gx, uint8_t _gy) {
   }
 }
 
-bool Validate::validate_squares(){
-  for(int region = 1; region <= num_regions; region++){
-    uint8_t region_square = 0;
-    bool flash_region_squares = false;
+bool Validate::validate_square(uint8_t gx, uint8_t gy){
+  uint8_t type = grid->get_type(gx, gy);
+  uint8_t region = region_map[gx / 2][gy / 2];
 
-    // going through all cells
-    for(int i = 0; i < (grid->sy / 2); i++){
-      for(int j = 0; j < (grid->sx / 2); j++){
-        uint8_t map_x = (j * 2) + 1;
-        uint8_t map_y = (i * 2) + 1;
-        
-        // only looking at elements in the current region
-        if(region_map[j][i] == region){  
-          uint8_t type = grid->get_type(map_x, map_y);
+  for (int i = 0; i < (grid->sy / 2); i++) {
+    for (int j = 0; j < (grid->sx / 2); j++) {
 
-          // if its a square we cant have diffenrtly coloured in a region
-          if (type == C_SQ_B || type == C_SQ_W) {
-            if (region_square == 0) {
-              region_square = type;
-            }
-            if (type != region_square) {
-              flash_region_squares = true;
-            }
-          }
-
-        }
+      if(region_map[j][i] != region){
+        continue;
       }
-    }
+    
+      uint8_t map_x = (j * 2) + 1;
+      uint8_t map_y = (i * 2) + 1;
 
-    if(flash_region_squares){
-      for(uint8_t i = 0; i < (grid->sy / 2); i++){
-        for(uint8_t j = 0; j < (grid->sy / 2); j++){
-          if (region_map[j][i] == region){
-            uint8_t map_x = (j * 2) + 1;
-            uint8_t map_y = (i * 2) + 1;
-            uint8_t type = grid->get_type(map_x, map_y);
-            if (type == C_SQ_B || type == C_SQ_W){
-              invalids_add(map_x, map_y);
-            }
-          }
-        }
+      uint8_t curr_type = grid->get_type(map_x, map_y);
+
+      if(curr_type < C_SQ_B || curr_type > C_SQ_ORANGE) {
+        continue;
+      }
+          
+      if(grid->get_type(map_x, map_y) != type && grid->get_type(map_x, map_y)){
+        invalids_add(gx, gy);
+        return false;
       }
     }
   }
+
+  return true;
 }
+
+// bool Validate::validate_squares() {
+//   for (int i = 0; i < (grid->sy / 2); i++) {
+//     for (int j = 0; j < (grid->sx / 2); j++) {
+//       uint8_t map_x = (j * 2) + 1;
+//       uint8_t map_y = (i * 2) + 1;
+
+//       uint8_t curr_type = grid->get_type(map_x, map_y);
+      
+//       if(curr_type < C_SQ_B && curr_type > C_SQ_ORANGE) {
+//         continue;
+//       }
+
+//       validate_square(map_x, map_y);
+//     }
+//   }
+// }
+
+  // // check all regions
+  // for (int region = 1; region <= num_regions; region++) {
+  //   uint8_t region_square = 0;
+  //   bool flash_region_squares = false;
+
+  //   // go through all of them twice.
+  //   // in case the region is invalid we can mark all invalid on the second run.
+  //   for (int h = 0; h < 2; h++) {
+  //     for (int i = 0; i < (grid->sy / 2); i++) {
+  //       for (int j = 0; j < (grid->sx / 2); j++) {
+  //         uint8_t map_x = (j * 2) + 1;
+  //         uint8_t map_y = (i * 2) + 1;
+
+  //         if (region_map[j][i] == region) {
+  //           continue;
+  //         }
+
+  //         uint8_t type = grid->get_type(map_x, map_y);
+
+  //         if (type != C_SQ_B || type != C_SQ_W) {
+  //           continue;
+  //         }
+          
+  //         if (flash_region_squares){
+  //           invalids_add(map_x, map_y);
+  //           continue;
+  //         }
+
+  //         if (region_square == 0) {
+  //           region_square = type;
+  //         }
+
+  //         if (type != region_square) {
+  //           flash_region_squares = true;
+  //           i = 10;
+  //           j = 10;
+  //         }  
+  //       }
+  //     }
+  //   }
+  // }
+
+  // OLD WAY of validation. Less storage efficient.
+
+  // for(int region = 1; region <= num_regions; region++){
+  //   uint8_t region_square = 0;
+  //   bool flash_region_squares = false;
+
+  //   // going through all cells
+  //   for(int i = 0; i < (grid->sy / 2); i++){
+  //     for(int j = 0; j < (grid->sx / 2); j++){
+  //       uint8_t map_x = (j * 2) + 1;
+  //       uint8_t map_y = (i * 2) + 1;
+        
+  //       // only looking at elements in the current region
+  //       if(region_map[j][i] == region){  
+  //         uint8_t type = grid->get_type(map_x, map_y);
+
+  //         // if its a square we cant have diffenrtly coloured in a region
+  //         if (type == C_SQ_B || type == C_SQ_W) {
+  //           if (region_square == 0) {
+  //             region_square = type;
+  //           }
+  //           if (type != region_square) {
+  //             flash_region_squares = true;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   if(flash_region_squares){
+  //     for(uint8_t i = 0; i < (grid->sy / 2); i++){
+  //       for(uint8_t j = 0; j < (grid->sy / 2); j++){
+  //         if (region_map[j][i] == region){
+  //           uint8_t map_x = (j * 2) + 1;
+  //           uint8_t map_y = (i * 2) + 1;
+  //           uint8_t type = grid->get_type(map_x, map_y);
+  //           if (type == C_SQ_B || type == C_SQ_W){
+  //             invalids_add(map_x, map_y);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+// }
 
 // The following is a bit unfortunate:
 // To save memory (RAM) I chose to not create a Cell class that 
@@ -305,8 +359,9 @@ bool Validate::validate_squares(){
 
 bool Validate::validate_suns(){
   bool valid = true;
-  uint8_t colour_map[4][4]; // 0 = NONE, 1 = BLACK, 2 = WHITE, 3 = ORANGE
+  uint8_t colour_map[4][4]; // 0 = NONE, 1 = BLACK, 2 = WHITE, 3 = BLUE, 4 = GREEN, 5 = ORANGE
 
+  // clear and init the colour map
   for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
       colour_map[j][i] = 0;
@@ -320,25 +375,15 @@ bool Validate::validate_suns(){
       uint8_t map_y = (i * 2) + 1;
       uint8_t type = grid->get_type(map_x, map_y);     
 
-      // BLACK
-      if (type == C_SQ_B || type == C_SUN_B){
-        colour_map[j][i] = 1;
-        continue;
+      if(type >= C_SQ_B && type <= C_SQ_ORANGE){
+        uint8_t colour_index = type - C_SQ_B;
+        colour_map[j][i] = colour_index;
       }
-      
-      // WHITE
-      if (type == C_SQ_W || type == C_SUN_W){
-        colour_map[j][i] = 2;
-        continue;
-      }
-      
-      // ORANGE
-      // if (type > 64 && type < 68){
-      //   colour_map[map_x][map_y] = 3;
-      //   continue;
-      // }
 
-      colour_map[j][i] = 0;
+      if(type >= C_SUN_B && type <= C_SUN_ORANGE){
+        uint8_t colour_index = type - C_SUN_B;
+        colour_map[j][i] = colour_index;
+      }
     }
   }
 

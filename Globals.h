@@ -47,10 +47,16 @@
 // SQUARES
 #define C_SQ_B    (uint8_t)68
 #define C_SQ_W    (uint8_t)69
+#define C_SQ_BLUE (uint8_t)70
+#define C_SQ_GREEN  (uint8_t)71
+#define C_SQ_ORANGE (uint8_t)72
 
 // SUNS
 #define C_SUN_B   (uint8_t)73
 #define C_SUN_W   (uint8_t)74
+#define C_SUN_BLUE (uint8_t)75
+#define C_SUN_GREEN  (uint8_t)76
+#define C_SUN_ORANGE (uint8_t)77
 
 // path + grid definitions
 #define PATHWIDTH   (uint8_t)21
