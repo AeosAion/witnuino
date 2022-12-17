@@ -114,7 +114,7 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
   }
 
   // Path
-  if (type == P_HORZ) {  
+  if (type == P_HORZ || type == P_BROKEN) {  
     for (int8_t i = -1; i < 2; i++) {
       uint8_t nt = grid->get_type(_gx + i, _gy);
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
@@ -124,6 +124,10 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
         line(grid->gpx(_gx), grid->gpy(_gy), grid->gpx(_gx), grid->gpy(_gy + i), PATHWIDTH, grid->grid_colour);
       }
+    }
+
+    if(type == P_BROKEN){
+      line(grid->gpx(_gx), grid->gpy(_gy) - PATHRADIUS - 1, grid->gpx(_gx), grid->gpy(_gy) + PATHRADIUS + 1, PATHRADIUS + 2, grid->bg_colour);
     }
   }
  

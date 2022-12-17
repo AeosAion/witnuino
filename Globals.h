@@ -34,6 +34,7 @@
 #define P_VRTX    (uint8_t)111
 #define P_HEX     (uint8_t)43
 #define P_HORZ    (uint8_t)45
+#define P_BROKEN  (uint8_t)46
 #define P_STRT    (uint8_t)115
 #define P_END     (uint8_t)101
 
