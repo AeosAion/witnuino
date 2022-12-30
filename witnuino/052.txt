@@ -1,0 +1,10 @@
+359
+e-s-o
+-C-x-
+o-o-o
+-B-x-
+o-s-o
+-x-B-
+o-o-o
+-x-C-
+o-s-e

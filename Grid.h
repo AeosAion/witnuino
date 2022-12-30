@@ -31,6 +31,8 @@ class Grid{
 
     bool setup();
 
+    void colour_palette(uint8_t index);
+
     // translate grid coordinate to pixel coordinate
     int gpx(uint8_t _gx);
     int gpy(uint8_t _gy);

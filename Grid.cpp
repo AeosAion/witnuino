@@ -29,31 +29,64 @@ void Grid::load_map(){
   // LEVEL FILE
   dh.open_txt_file(String(level_digits[0]) + String(level_digits[1]) + String(level_digits[2]));
 
-  uint8_t colour_index = dh.read_next();
-  // colour_index *= 3;   
-  
-  bg_colour = AREA00_BG; // + colour_index;
-  grid_colour = AREA00_GC; // + colour_index;
-  path_colour = AREA00_PC; // + colour_index;   
+  // uint8_t colour_index = dh.read_next();
+
+  uint8_t colour_index = dh.read_next() - '0';
+  colour_palette(colour_index);
+
+  // bg_colour = AREA00_BG; // + colour_index;
+  // grid_colour = AREA00_GC; // + colour_index;
+  // path_colour = AREA00_PC; // + colour_index;   
   
   sx = dh.read_next() - '0';
   sy = dh.read_next() - '0';
 
   // skipping the "new line" chars
-  dh.read_next();          
-  dh.read_next();
-
+  if(dh.read_next() == 13){
+    dh.read_next();
+  }
+  
   for (int8_t i = 0; i < sy; i++) {
-    for (int8_t j = 0; j < sx + 2; j++) {
-      uint8_t g = dh.read_next();
+    for (int8_t j = 0; j <= sx; j++) {
+      uint8_t g = dh.read_next(); //
+
       if (j < sx) {
         elements_map[j][i] = g;
         // Serial.print(g);
       }
+            
+      if(g == 13){
+        dh.read_next();
+      }
+
       // Serial.println("");
     }
   }
   dh.close_file();  
+}
+
+void Grid::colour_palette(uint8_t index){
+    bg_colour = AREA00_BG; // + colour_index;
+    grid_colour = AREA00_GC; // + colour_index;
+    path_colour = AREA00_PC; // + colour_index;    
+
+  if( index ==  1){
+    bg_colour = AREA01_BG; // + colour_index;
+    grid_colour = AREA01_GC; // + colour_index;
+    path_colour = AREA01_PC; // + colour_index;    
+  }
+
+  if( index ==  2){
+    bg_colour = AREA02_BG; // + colour_index;
+    grid_colour = AREA02_GC; // + colour_index;
+    path_colour = AREA02_PC; // + colour_index;    
+  }
+
+  if( index ==  3){
+    bg_colour = AREA03_BG; // + colour_index;
+    grid_colour = AREA03_GC; // + colour_index;
+    path_colour = AREA03_PC; // + colour_index;    
+  }
 }
 
 // returns type of a gridpos

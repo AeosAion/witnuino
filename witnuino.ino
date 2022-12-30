@@ -62,7 +62,7 @@ void loop() {
       write_save();
       delay(1000);
       draw.fade(1, 120, 0);
-      delay(100);
+      //delay(100);
     } else {
       validate.flash_invalids();
       draw.fade(1, 120, 0);

@@ -1,0 +1,10 @@
+099
+xxo.o-o-o
+xx-x.x-x-
+o-o.o-o.e
+-x-x-x-x.
+o-s.o-o-o
+-x.x.x-x-
+o-o.o-o.o
+-x-x-xxxx
+o-o-oxxxx

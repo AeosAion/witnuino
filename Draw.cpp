@@ -119,15 +119,19 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
       uint8_t nt = grid->get_type(_gx + i, _gy);
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
         line(grid->gpx(_gx), grid->gpy(_gy), grid->gpx(_gx + i), grid->gpy(_gy), PATHWIDTH, grid->grid_colour);
+        
+        if(type == P_BROKEN){
+          line(grid->gpx(_gx), grid->gpy(_gy) - PATHRADIUS - 1, grid->gpx(_gx), grid->gpy(_gy) + PATHRADIUS + 1, PATHRADIUS + 2, grid->bg_colour);
+        }
       }
       nt = grid->get_type(_gx, _gy + i);
       if (nt == P_VRTX || nt == P_STRT || nt == P_END || nt == P_HORZ || nt == P_HEX) {
         line(grid->gpx(_gx), grid->gpy(_gy), grid->gpx(_gx), grid->gpy(_gy + i), PATHWIDTH, grid->grid_colour);
-      }
-    }
 
-    if(type == P_BROKEN){
-      line(grid->gpx(_gx), grid->gpy(_gy) - PATHRADIUS - 1, grid->gpx(_gx), grid->gpy(_gy) + PATHRADIUS + 1, PATHRADIUS + 2, grid->bg_colour);
+        if(type == P_BROKEN){
+          line(grid->gpx(_gx) - PATHRADIUS - 1, grid->gpy(_gy), grid->gpx(_gx) + PATHRADIUS + 1, grid->gpy(_gy), PATHRADIUS + 2, grid->bg_colour);
+        }
+      }
     }
   }
  
@@ -143,12 +147,12 @@ void Draw::element(uint8_t _gx, uint8_t _gy) {
 
   // Hex
   if (type == P_HEX){     
-    hex(_gx, _gy, HEXCOLOUR);
+    hex(_gx, _gy, GREY);
   }
 
   // Triangle
   if (type >= C_TRI1 && type <= C_TRI3) {  // triangle tile
-    triangle(_gx, _gy, type - (C_TRI1 - 1), TRICOLOUR);
+    triangle(_gx, _gy, type - (C_TRI1 - 1), ORANGE);
   }
 
   // Square
@@ -174,15 +178,15 @@ int Draw::colour_index_translate(uint8_t colour_index){
   }
 
   if(colour_index == 2){
-    return BLUE;
+    return CYAN;
   }
 
   if(colour_index == 3){
-    return GREEN;
+    return MAGENTA;
   }
 
   if(colour_index == 4){
-    return TRICOLOUR;
+    return ORANGE;
   }
 }
 
@@ -206,12 +210,12 @@ void Draw::colour_element(uint8_t _gx, uint8_t _gy, int _colour){
   }
 
   // SQUARE
-  if (type >= C_SQ_B && type <= C_SQ_W){
+  if (type >= C_SQ_B && type <= C_SQ_ORANGE){
     fill_circle(grid->gpx(_gx), grid->gpy(_gy), grid->spacing / 4, _colour);
   }
 
   // SUN
-  if (type >= C_SUN_B && type <= C_SUN_W){
+  if (type >= C_SUN_B && type <= C_SUN_ORANGE){
     sun(_gx, _gy, _colour);
   }
 }

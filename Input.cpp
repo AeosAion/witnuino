@@ -24,8 +24,8 @@ void Input::update(){
 
   active = true;
 
-  previous_x = x;
-  previous_y = y;
+  // previous_x = x;
+  // previous_y = y;
 
   x = ts.getPoint().x;
   y = ts.getPoint().y;
